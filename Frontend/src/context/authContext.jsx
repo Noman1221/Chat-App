@@ -1,13 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useEffect, useState } from "react";
-import { connectSocket, disconnectSocket } from "../component/socket";
 
 export const authContext = createContext(null);
 const baseUrl = "http://localhost:5000";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    console.log("what's the user info", user);
 
 
     // Load user from token on app load
@@ -23,11 +21,11 @@ export const AuthProvider = ({ children }) => {
                 if (!res.ok) throw new Error("Not authenticated");
                 const data = await res.json();
                 setUser(data.user);
-                connectSocket(data.user._id);
+
             } catch {
                 setUser(null);
                 localStorage.removeItem("token");
-                disconnectSocket();
+
             }
         })();
     }, []);
@@ -41,6 +39,8 @@ export const AuthProvider = ({ children }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ fullname, email, password }),
             });
+            // console.log("show response", res);
+
             if (!res.ok) throw new Error("Signup failed");
 
             const data = await res.json();
@@ -69,11 +69,10 @@ export const AuthProvider = ({ children }) => {
 
             const data = await res.json();
             localStorage.setItem("token", data.token);
-            console.log("what i get during login :", data.isUser);
 
             if (data.isUser) {
                 setUser(data.isUser)
-                connectSocket(data.isUser._id);
+
             };
 
             return data.isUser
@@ -97,28 +96,36 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem("token");
         setUser(null);
-        disconnectSocket();
     };
 
-    const updateUserProfile = async (name, bio) => {
+    const updateUserProfile = async (name, bio, file) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem("token");
+
+            const formData = new FormData();
+            formData.append("fullname", name);
+            formData.append("bio", bio);
+            if (file) {
+                formData.append("profilePicture", file); // must match multer field name
+            }
+
             const res = await fetch(`${baseUrl}/users/api/updateProfile`, {
                 method: "PUT",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
+                    Authorization: `Bearer ${token}`,
+                    // ❌ DO NOT set Content-Type manually (browser sets multipart/form-data)
                 },
-                body: JSON.stringify({ fullname: name, bio }),
+                body: formData,
             });
-            if (!res.ok) throw new Error("Profile update failed");
 
+            if (!res.ok) throw new Error("Profile update failed");
             const data = await res.json();
             console.log("Profile updated", data);
         } catch (error) {
             console.error(error);
         }
     };
+
 
     const getUsersForSidebar = async () => {
         const token = localStorage.getItem('token');
@@ -149,9 +156,13 @@ export const AuthProvider = ({ children }) => {
             headers: { "Authorization": `Bearer ${token}` },
             body: formData,
         });
+        console.log(res);
+
         if (!res.ok) throw new Error("Send message failed");
+
         return await res.json();
     };
+
 
     const markMessageAsSeen = async (id) => {
         const token = localStorage.getItem("token");
@@ -174,7 +185,8 @@ export const AuthProvider = ({ children }) => {
             getMessages,
             messageSend,
             markMessageAsSeen,
-            fetchCurrentUser
+            fetchCurrentUser,
+
         }}>
             {children}
         </authContext.Provider>

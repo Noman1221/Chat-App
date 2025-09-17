@@ -1,7 +1,12 @@
 
-function rightSidebar() {
+function rightSidebar({ selectUser }) {
     return (
-        <div>rightSidebar</div>
+        <div>
+            <p>{selectUser?.fullname}</p>
+            <p>{selectUser?.email}</p>
+            <p>{selectUser?.bio}</p>
+
+        </div>
     )
 }
 

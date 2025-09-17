@@ -1,41 +1,32 @@
 /* eslint-disable no-undef */
 // eslint-disable-next-line react-refresh/only-export-components
-import { useContext, useState } from "react";
+import { useState } from "react";
 import ChatContainer from "../component/chatContainer";
-import RightContainer from "../component/rightSidebar";
-import Sidebar from "../component/sideBar";
-import { authContext } from "../context/authContext";
+import RightSideBar from "../component/rightSideBar";
+import SideBar from "../component/sideBar";
 
 function HomePage() {
-    const { user } = useContext(authContext);
-    console.log("yeh alag hai", user);
-
     const [selectUser, setSelectUser] = useState(null);
-    const [messages, setMessages] = useState({ messages: [] });
+    const [messages, setMessages] = useState([]);
+
+
+
 
     return (
-        <div className="h-screen w-full flex bg-gray-100">
-            {/* Sidebar (Left Panel) */}
-            <div className="w-1/4 border-r border-gray-300">
-                <Sidebar
-                    selectUser={selectUser}
-                    setSelectUser={setSelectUser}
-                    setMessages={setMessages}
-                />
+        <div className="flex h-screen">
+            <div className="w-1/4">
+                <SideBar selectUser={selectUser} setSelectUser={setSelectUser} />
             </div>
-
-            {/* Chat Container (Middle Panel) */}
-            <div className="w-2/4 border-r border-gray-300">
+            <div className="flex-1">
                 <ChatContainer
                     selectUser={selectUser}
                     messages={messages}
                     setMessages={setMessages}
                 />
             </div>
-
-            {/* Right Sidebar (Right Panel) */}
-            <div className="w-1/4 hidden md:block">
-                <RightContainer selectUser={selectUser} />
+            <div className="w-1/4 bg-gray-100">
+                <RightSideBar selectUser={selectUser} />  {/* Corrected the component usage */}
+                rightSideBar
             </div>
         </div>
     );

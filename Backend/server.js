@@ -28,28 +28,38 @@ export const io = new Server(server, {
 })
 
 // store online users 
-export const userSocketMap = {}
+export const userSocketMap = {};
 
 io.on("connection", (socket) => {
-    const userId = socket.handshake.query?.userId || socket.handshake.auth?.userId || null;
-    console.log("socket connected, userId:", userId);
+
+    const userId = socket.handshake.auth?.userId;
 
 
     if (userId) {
-        userSocketMap[userId] = socket.id;
-        // Optionally store reverse map socketId -> userId for cleanup
+        if (!userSocketMap[userId]) {
+            userSocketMap[userId] = new Set();
+        }
+        userSocketMap[userId].add(socket.id);
+
+        console.log("socket connected User:", userSocketMap);
         socket.userId = userId;
     }
 
+    // Send online users
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     socket.on("disconnect", () => {
-        const uid = socket.userId || userId;
-        console.log("socket disconnected, userId:", uid);
-        if (uid && userSocketMap[uid]) delete userSocketMap[uid];
+        const uid = socket.userId;
+        if (uid && userSocketMap[uid]) {
+            userSocketMap[uid].delete(socket.id);
+            if (userSocketMap[uid].size === 0) {
+                delete userSocketMap[uid];
+            }
+        }
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });
-})
+});
+
 
 app.use(express.json({ limit: "10mb" })); // Increase from 4mb to 10mb
 app.use(express.urlencoded({ limit: "10mb", extended: true }));

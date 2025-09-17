@@ -30,15 +30,17 @@ function SideBar({ selectUser, setSelectUser }) {
                 {users.map((u) => (
                     <li
                         key={u._id}
-                        onClick={() => setSelectUser(u)}
+                        onClick={() => {
+                            setSelectUser(u);
+                        }}
                         className={`p-3 cursor-pointer rounded-lg transition ${selectUser?._id === u._id
                             ? "bg-green-500 text-white"
                             : "text-gray-800 hover:bg-green-100"
                             }`}
                     >
-                        {/* ✅ Show fullname if available, fallback to name */}
                         {u.fullname}
                     </li>
+
                 ))}
             </ul>
         </div>

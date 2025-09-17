@@ -95,16 +95,21 @@ export const messageSend = async (req, res) => {
             updatedAt: saved.updatedAt,
         };
 
-        const recieverSocketId = userSocketMap[id];
-        if (recieverSocketId) {
-            io.to(recieverSocketId).emit("newMessage", payload);
+        const recieverSocketIds = userSocketMap[id];
+        if (recieverSocketIds) {
+            [...recieverSocketIds].forEach((sockId) => {   // Convert Set → Array
+                io.to(sockId).emit("newMessage", payload);
+            });
         }
 
-        // Optionally also emit to the sender socket so other sender tabs/devices receive it
-        const senderSocketId = userSocketMap[userId];
-        if (senderSocketId && senderSocketId !== recieverSocketId) {
-            io.to(senderSocketId).emit("newMessage", payload);
+        const senderSocketIds = userSocketMap[userId];
+        if (senderSocketIds) {
+            [...senderSocketIds].forEach((sockId) => {    // Same fix here
+                io.to(sockId).emit("newMessage", payload);
+            });
         }
+
+
 
         res.status(200).json({ message: "message sent successfully", newMessage: payload });
     } catch (error) {
