@@ -2,13 +2,13 @@
 // eslint-disable-next-line react-refresh/only-export-components
 import { useState } from "react";
 import ChatContainer from "../component/chatContainer";
-import RightSideBar from "../component/rightSideBar";
+import RightSideBar from "../component/rightSidebar";
 import SideBar from "../component/sideBar";
 
 function HomePage() {
     const [selectUser, setSelectUser] = useState(null);
     const [messages, setMessages] = useState([]);
-    console.log("hello brother", selectUser);
+
 
 
 

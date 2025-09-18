@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import img1 from "../assets/img1.jpg";
 import { authContext } from "../context/authContext";
-
 function SideBar({ selectUser, setSelectUser }) {
     const { getUsersForSidebar, user } = useContext(authContext);
     const [users, setUsers] = useState([]);
+
 
 
 
@@ -28,9 +30,14 @@ function SideBar({ selectUser, setSelectUser }) {
     return (
         <div className="p-2 h-full overflow-y-auto bg-gray-100 border-r border-gray-300">
             <h2 className="font-bold mb-3 text-gray-700">Chats</h2>
+            <div>
+                <Link to={"/register"} className="font-bold mb-3 text-gray-700">Sigin</Link>
+            </div>
+
 
             <ul>
                 {users.map((u) => (
+
                     <li
                         key={u._id}
                         onClick={() => {
@@ -42,6 +49,8 @@ function SideBar({ selectUser, setSelectUser }) {
                             }`}
                     >
                         {u.fullname}
+                        {u.profilePicture ? <img src={u.profilePicture} alt="image is found" style={{ width: "20px", height: "20px" }} /> : <img src={img1} style={{ width: "20px", height: "20px" }} />}
+
                     </li>
 
                 ))}

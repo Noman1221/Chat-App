@@ -3,6 +3,7 @@ import { io } from "socket.io-client";
 import { authContext } from "../context/authContext";
 
 function ChatContainer({ selectUser, messages, setMessages }) {
+    console.log(messages);
 
 
     let id = selectUser?._id;
@@ -36,7 +37,6 @@ function ChatContainer({ selectUser, messages, setMessages }) {
     useEffect(() => {
 
         if (!user) return;
-        console.log("user kya hai ", user);
 
         if (!socketRef.current) {
             socketRef.current = io("http://localhost:5000", {
@@ -93,13 +93,13 @@ function ChatContainer({ selectUser, messages, setMessages }) {
         getAllMsg();
     }, [getMessages, id, selectUser, setMessages]);
 
-    console.log("chal", selectUser);
+
 
     return (
         <div>
             {selectUser ? (
                 <div>
-                    {/* <img src={selectUser?.image} alt="" /> */}
+                    <img src={selectUser?.profilePicture} style={{ width: "30px", height: "30" }} />
                     <h2>{selectUser?.fullname}</h2>
                 </div>
             ) : (
