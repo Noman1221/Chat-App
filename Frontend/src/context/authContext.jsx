@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }) => {
                 const me = await fetchCurrentUser();
                 if (me) setUser(me);
             }
+            return data.userData;
         } catch (error) {
             console.error(error);
         }

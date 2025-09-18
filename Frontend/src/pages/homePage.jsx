@@ -8,6 +8,7 @@ import SideBar from "../component/sideBar";
 function HomePage() {
     const [selectUser, setSelectUser] = useState(null);
     const [messages, setMessages] = useState([]);
+    console.log("hello brother", selectUser);
 
 
 

@@ -3,13 +3,16 @@ import { useContext, useEffect, useState } from "react";
 import { authContext } from "../context/authContext";
 
 function SideBar({ selectUser, setSelectUser }) {
-    const { getUsersForSidebar } = useContext(authContext);
+    const { getUsersForSidebar, user } = useContext(authContext);
     const [users, setUsers] = useState([]);
+
+
 
     useEffect(() => {
         const getAllUser = async () => {
             try {
                 let data = await getUsersForSidebar();
+
 
 
                 if (data) {
@@ -20,7 +23,7 @@ function SideBar({ selectUser, setSelectUser }) {
             }
         };
         getAllUser();
-    }, [getUsersForSidebar]);
+    }, [getUsersForSidebar, user]);
 
     return (
         <div className="p-2 h-full overflow-y-auto bg-gray-100 border-r border-gray-300">

@@ -45,13 +45,15 @@ export const getMessages = async (req, res) => {
 
 // mark message as to seen
 
+// controllers/messageController.js
 export const markMessageAsSeen = async (req, res) => {
     try {
-        const { senderId, receiverId } = req.body; // from frontend
+        const receiverId = req.user._id; // logged-in user from isAuthenticate
+        const senderId = req.params.id;  // selected user id from URL
 
         await Message.updateMany(
             { senderId, receiverId, seen: false },
-            { $set: { seen: true } }
+            { $set: { seen: true, seenAt: new Date() } }  // store seenAt for 1-min logic
         );
 
         res.status(200).json({ message: "Messages marked as seen" });
@@ -60,6 +62,7 @@ export const markMessageAsSeen = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 
 // send message to individual 

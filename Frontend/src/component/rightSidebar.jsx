@@ -1,5 +1,7 @@
 
 function rightSidebar({ selectUser }) {
+    console.log("dekh bhai", selectUser);
+
     return (
         <div>
             <p>{selectUser?.fullname}</p>
