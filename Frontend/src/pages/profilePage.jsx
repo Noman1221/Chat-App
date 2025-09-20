@@ -1,15 +1,14 @@
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { authContext } from "../context/authContext";
 
 function ProfilePage() {
+    const navigate = useNavigate();
     const { updateUserProfile } = useContext(authContext);
-    const [response, setResponse] = useState(null);
-
     const [preview, setPreview] = useState(null);
     const [name, setName] = useState("");
     const [bio, setBio] = useState("");
     const [file, setFile] = useState(null);
-
 
     const handleImageChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -19,20 +18,29 @@ function ProfilePage() {
         }
     };
 
-
     const handleSubmit = async () => {
-        if (!name && !bio && !file) return;
-        const res = await updateUserProfile(name, bio, file);
-        setResponse(res);
+        if (!name || !bio || (!file && !preview)) return;
+
+        try {
+            const res = await updateUserProfile(name, bio, file);
+            // Make sure res has the updated user
+            if (res && res.user) {
+                // redirect to home page
+                navigate("/", { replace: true });
+            } else {
+                console.error("Update failed: no user returned", res);
+            }
+        } catch (err) {
+            console.error("Error updating profile:", err);
+        }
     };
 
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
+                {/* Left: Name & Bio */}
                 <div className="bg-white p-6 rounded-2xl shadow-md space-y-4">
                     <h2 className="text-xl font-bold text-gray-800">Update Profile</h2>
-
                     <input
                         type="text"
                         placeholder="Update Name"
@@ -40,7 +48,6 @@ function ProfilePage() {
                         onChange={(e) => setName(e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
                     />
-
                     <textarea
                         placeholder="Change Bio"
                         rows="4"
@@ -50,7 +57,7 @@ function ProfilePage() {
                     />
                 </div>
 
-
+                {/* Right: Profile Image */}
                 <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col items-center justify-center">
                     <label htmlFor="fileInput" className="cursor-pointer">
                         {preview ? (
@@ -65,8 +72,6 @@ function ProfilePage() {
                             </div>
                         )}
                     </label>
-
-
                     <input
                         id="fileInput"
                         type="file"
@@ -74,11 +79,9 @@ function ProfilePage() {
                         className="hidden"
                         onChange={handleImageChange}
                     />
-
                     <p className="text-sm text-gray-600 mt-3">Click image to change</p>
                 </div>
             </div>
-
 
             <div className="mt-6 flex justify-center">
                 <button
@@ -88,30 +91,6 @@ function ProfilePage() {
                     Save Profile
                 </button>
             </div>
-
-
-            {response && response.user && (
-                <div className="mt-8 p-6 bg-white rounded-2xl shadow-md">
-                    <p className="text-green-600 font-semibold">{response.message}</p>
-
-                    <div className="mt-4 space-y-2">
-                        <img
-                            src={response.user.profilePicture}
-                            alt="Profile"
-                            className="w-32 h-32 rounded-full object-cover border-2 border-gray-300"
-                        />
-                        <p>
-                            <strong>Name:</strong> {response.user.fullname}
-                        </p>
-                        <p>
-                            <strong>Email:</strong> {response.user.email}
-                        </p>
-                        <p>
-                            <strong>Bio:</strong> {response.user.bio}
-                        </p>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

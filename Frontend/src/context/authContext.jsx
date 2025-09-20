@@ -128,7 +128,9 @@ export const AuthProvider = ({ children }) => {
 
             if (!res.ok) throw new Error("Profile update failed");
             const data = await res.json();
+
             console.log("Profile updated", data);
+            return data;
         } catch (error) {
             console.error(error);
         }
