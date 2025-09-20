@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import { authContext } from "../context/authContext";
 
 function ChatContainer({ selectUser, messages, setMessages }) {
-    console.log(messages);
+
 
 
     let id = selectUser?._id;
@@ -73,8 +73,7 @@ function ChatContainer({ selectUser, messages, setMessages }) {
         }
 
         try {
-            const data = await messageSend(formData, id);
-            console.log(data.newMessage._id);
+            await messageSend(formData, id);
 
             setNewMessages("");
             setFile(null);
@@ -158,7 +157,6 @@ function ChatContainer({ selectUser, messages, setMessages }) {
                     </div>
                 );
             })}
-
         </div>
     );
 }

@@ -84,14 +84,21 @@ export const AuthProvider = ({ children }) => {
 
     const fetchCurrentUser = async () => {
         const token = localStorage.getItem("token");
+        console.log(token);
+
         if (!token) return null;
 
-        const res = await fetch(`${baseUrl}/users/api/me`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) return null;
-        const data = await res.json();
-        return data.user;
+        try {
+            const res = await fetch(`${baseUrl}/users/api/me`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) return null;
+            const data = await res.json();
+            return data.user;
+        } catch (error) {
+            console.log(error);
+
+        }
     };
 
     const logout = () => {
@@ -131,48 +138,68 @@ export const AuthProvider = ({ children }) => {
     const getUsersForSidebar = async () => {
         const token = localStorage.getItem('token');
         if (!token) return [];
-        const res = await fetch(`${baseUrl}/api/messages/users`, {
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Get users failed");
-        const data = await res.json();
-        return data.users;
+        try {
+            const res = await fetch(`${baseUrl}/api/messages/users`, {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Get users failed");
+            const data = await res.json();
+            return data.users;
+        } catch (error) {
+            console.log(error);
+
+        }
     };
 
     const getMessages = async (id) => {
         const token = localStorage.getItem("token");
-        const res = await fetch(`${baseUrl}/api/messages/${id}`, {
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Get messages failed");
-        return await res.json();
+        try {
+            const res = await fetch(`${baseUrl}/api/messages/${id}`, {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Get messages failed");
+            return await res.json();
+        } catch (error) {
+            console.log(error);
+
+        }
     };
 
     const messageSend = async (formData, id) => {
         const token = localStorage.getItem("token");
-        const res = await fetch(`${baseUrl}/api/messages/${id}`, {
-            method: "POST",
-            headers: { "Authorization": `Bearer ${token}` },
-            body: formData,
-        });
-        console.log(res);
+        try {
+            const res = await fetch(`${baseUrl}/api/messages/${id}`, {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${token}` },
+                body: formData,
+            });
+            console.log(res);
 
-        if (!res.ok) throw new Error("Send message failed");
+            if (!res.ok) throw new Error("Send message failed");
 
-        return await res.json();
+            return await res.json();
+        } catch (error) {
+            console.log(error);
+
+        }
     };
 
 
     const markMessageAsSeen = async (id) => {
         const token = localStorage.getItem("token");
-        const res = await fetch(`${baseUrl}/api/messages/mark/${id}`, {
-            method: "PUT",
-            headers: { 'Authorization': `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Mark as seen failed");
-        return await res.json();
+        try {
+            const res = await fetch(`${baseUrl}/api/messages/mark/${id}`, {
+                method: "PUT",
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Mark as seen failed");
+            return await res.json();
+        } catch (error) {
+            console.log(error);
+
+        }
     };
 
     return (

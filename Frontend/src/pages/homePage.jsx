@@ -9,24 +9,20 @@ function HomePage() {
     const [selectUser, setSelectUser] = useState(null);
     const [messages, setMessages] = useState([]);
 
-
-
-
-
     return (
         <div className="flex h-screen">
-            <div className="w-1/4">
+            <div className="w-1/4"> {/* 25% width */}
                 <SideBar selectUser={selectUser} setSelectUser={setSelectUser} />
             </div>
-            <div className="flex-1">
+            <div className="w-2/4"> {/* 50% width - changed from flex-1 to w-2/4 */}
                 <ChatContainer
                     selectUser={selectUser}
                     messages={messages}
                     setMessages={setMessages}
                 />
             </div>
-            <div className="w-1/4 bg-gray-100">
-                <RightSideBar selectUser={selectUser} />  {/* Corrected the component usage */}
+            <div className="w-1/4 bg-gray-100"> {/* 25% width */}
+                <RightSideBar selectUser={selectUser} />
                 rightSideBar
             </div>
         </div>

@@ -12,24 +12,34 @@ function LoginPage() {
     const { signup, login } = auththings;
 
     function toggleForm() {
-        setIsSignLog(isSignLog === "Signup" ? "Login" : "Signup");
-        setFullname("");
-        setEmail("");
-        setPassword("");
+        try {
+            setIsSignLog(isSignLog === "Signup" ? "Login" : "Signup");
+            setFullname("");
+            setEmail("");
+            setPassword("");
+        } catch (error) {
+            console.log(error);
+
+        }
     }
 
     async function handleForm(e) {
         e.preventDefault();
-        if (isSignLog === "Signup") {
-            await signup(fullname, email, password);
-            navigate("/profile");
-        } else {
-            await login(email, password);
-            navigate("/");
+        try {
+            if (isSignLog === "Signup") {
+                await signup(fullname, email, password);
+                navigate("/profile");
+            } else {
+                await login(email, password);
+                navigate("/");
+            }
+            setFullname("");
+            setEmail("");
+            setPassword("");
+        } catch (error) {
+            console.log(error);
+
         }
-        setFullname("");
-        setEmail("");
-        setPassword("");
     }
 
     return (
