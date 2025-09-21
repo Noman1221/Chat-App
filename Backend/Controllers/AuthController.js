@@ -79,6 +79,7 @@ export const getCurrentUser = (req, res) => {
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized" });
     }
+    // console.log(req.user);
 
 
     res.json({ user: req.user });

@@ -42,7 +42,7 @@ function ChatContainer({ selectUser, messages, setMessages }) {
 
         if (!socketRef.current) {
             socketRef.current = io("http://localhost:5000", {
-                auth: { userId: user.userId },
+                auth: { userId: user?._id },
             });
         }
 
@@ -50,8 +50,8 @@ function ChatContainer({ selectUser, messages, setMessages }) {
 
         const handleNewMessage = (msg) => {
             if (
-                (msg.senderId === user.userId && msg.recieverId === id) ||
-                (msg.senderId === id && msg.recieverId === user.userId)
+                (msg.senderId === user?._id && msg.recieverId === id) ||
+                (msg.senderId === id && msg.recieverId === user?._id)
             ) {
                 setMessages((prev) => [...prev, msg]);
             }
@@ -140,7 +140,7 @@ function ChatContainer({ selectUser, messages, setMessages }) {
                 {selectUser && messages.length > 0 ? (
                     <div className="space-y-4">
                         {messages.map((msg) => {
-                            const isSender = msg.senderId === user.userId;
+                            const isSender = msg.senderId === user?._id;
                             return (
                                 <div
                                     key={msg._id}

@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useContext, useEffect, useState } from "react";
 import { FiMoreVertical } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import img1 from "../assets/img1.jpg";
 import { authContext } from "../context/authContext";
 
 function SideBar({ selectUser, setSelectUser }) {
-    const { getUsersForSidebar, user } = useContext(authContext);
+    const navigate = useNavigate();
+    const { getUsersForSidebar, user, logout } = useContext(authContext);
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [showMenu, setShowMenu] = useState(false);
@@ -23,6 +24,11 @@ function SideBar({ selectUser, setSelectUser }) {
         getAllUser();
     }, [getUsersForSidebar, user]);
 
+    const handleLogout = () => {
+        logout(); // Call the logout function from context
+        // setShowMenu(false); // Close the dropdown menu
+        navigate('/register'); // Redirect to register page
+    };
     // Filter users by search
     const filteredUsers = users.filter(u =>
         u.fullname.toLowerCase().includes(search.toLowerCase())
@@ -68,9 +74,9 @@ function SideBar({ selectUser, setSelectUser }) {
                                     User Profile
                                 </Link>
                                 <Link
-                                    to="/logout"
+                                    onClick={handleLogout}
                                     className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
-                                    onClick={() => setShowMenu(false)}
+
                                 >
                                     Logout
                                 </Link>

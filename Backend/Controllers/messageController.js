@@ -6,7 +6,7 @@ import { io, userSocketMap } from "../server.js";
 // get all users except the logged in user
 export const getUsersForSidebar = async (req, res) => {
     try {
-        let userId = req.user.userId;
+        let userId = req.user._id;
         let filteredUser = await user.find({ _id: { $ne: userId } });
         let unseenMessages = {};
         let promises = filteredUser.map(async (user) => {
@@ -24,21 +24,44 @@ export const getUsersForSidebar = async (req, res) => {
 
 // get all the messages
 
+
 export const getMessages = async (req, res) => {
     try {
-        let { id } = req.params
-        let userId = req.user.userId;
+        let { id } = req.params;
+        let userId = req.user._id;
+
+        console.log("Fetching messages for user:", userId, "with contact:", id);
+
+        // Since we're comparing with string IDs from params, use string comparison
         let messages = await Message.find({
             $or: [
                 { senderId: userId, recieverId: id },
                 { senderId: id, recieverId: userId },
-
             ],
-        }).sort({ createdAt: 1 }).populate("senderId", "fullname profilePicture").populate("recieverId", "fullname profilePicture");
-        await Message.updateMany({ senderId: id, recieverId: userId }, { seen: true });
-        res.status(200).json({ message: "get all selected user messages", messages });
+        })
+            .sort({ createdAt: 1 })
+            .populate("senderId", "fullname profilePicture")
+            .populate("recieverId", "fullname profilePicture");
+
+        // Mark messages as seen - use string IDs consistently
+        await Message.updateMany(
+            {
+                senderId: id,
+                recieverId: userId,
+                seen: false // Only mark unseen messages as seen
+            },
+            {
+                seen: true,
+                seenAt: new Date()
+            }
+        );
+
+        res.status(200).json({
+            message: "Get all selected user messages",
+            messages
+        });
     } catch (error) {
-        console.log(error.message);
+        console.log("Error in getMessages:", error.message);
         res.status(500).json({ message: error.message });
     }
 }
@@ -71,7 +94,7 @@ export const markMessageAsSeen = async (req, res) => {
 export const messageSend = async (req, res) => {
     try {
         const { id } = req.params; // receiver id
-        const userId = req.user.userId; // sender id from auth middleware
+        const userId = req.user._id;  // sender id from auth middleware
         const { text } = req.body;
 
         let imgUrl = undefined;

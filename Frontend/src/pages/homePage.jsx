@@ -8,7 +8,6 @@ import SideBar from "../component/sideBar";
 function HomePage() {
     const [selectUser, setSelectUser] = useState(null);
     const [messages, setMessages] = useState([]);
-
     return (
         <div className="flex h-screen">
             <div className="w-1/4"> {/* 25% width */}

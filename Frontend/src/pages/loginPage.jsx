@@ -38,7 +38,6 @@ function LoginPage() {
             setPassword("");
         } catch (error) {
             console.log(error);
-
         }
     }
 

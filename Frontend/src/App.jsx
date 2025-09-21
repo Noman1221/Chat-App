@@ -8,6 +8,7 @@ import PrivateRoute from "./middleware/privateRoute";
 import HomePage from "./pages/homePage";
 import LoginPage from "./pages/loginPage";
 import ProfilePage from "./pages/profilePage";
+import UserProfile from "./pages/userProfile";
 function App() {
   const auContext = useContext(authContext);
 
@@ -20,6 +21,11 @@ function App() {
         <Route path="/profile" element={
           <PrivateRoute>
             <ProfilePage />
+          </PrivateRoute>
+        } />
+        <Route path="/userProfile" element={
+          <PrivateRoute>
+            <UserProfile />
           </PrivateRoute>
         } />
 

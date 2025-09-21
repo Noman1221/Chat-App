@@ -6,6 +6,7 @@ const baseUrl = "http://localhost:5000";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    console.log(user);
 
 
     // Load user from token on app load
@@ -84,7 +85,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchCurrentUser = async () => {
         const token = localStorage.getItem("token");
-        console.log(token);
+
 
         if (!token) return null;
 
@@ -94,6 +95,8 @@ export const AuthProvider = ({ children }) => {
             });
             if (!res.ok) return null;
             const data = await res.json();
+            console.log("dekhe", data);
+
             return data.user;
         } catch (error) {
             console.log(error);
@@ -147,6 +150,8 @@ export const AuthProvider = ({ children }) => {
             });
             if (!res.ok) throw new Error("Get users failed");
             const data = await res.json();
+
+
             return data.users;
         } catch (error) {
             console.log(error);
@@ -162,7 +167,8 @@ export const AuthProvider = ({ children }) => {
                 headers: { "Authorization": `Bearer ${token}` },
             });
             if (!res.ok) throw new Error("Get messages failed");
-            return await res.json();
+            let data = await res.json();
+            return data
         } catch (error) {
             console.log(error);
 
