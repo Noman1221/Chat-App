@@ -6,7 +6,7 @@ const baseUrl = "http://localhost:5000";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    console.log(user);
+
 
 
     // Load user from token on app load
@@ -40,13 +40,13 @@ export const AuthProvider = ({ children }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ fullname, email, password }),
             });
-            // console.log("show response", res);
+
 
             if (!res.ok) throw new Error("Signup failed");
 
             const data = await res.json();
             localStorage.setItem('token', data.token);
-            console.log("try to find:", data.userData);
+
 
             if (data.userData) setUser(data.userData);
             else {
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
             });
             if (!res.ok) return null;
             const data = await res.json();
-            console.log("dekhe", data);
+
 
             return data.user;
         } catch (error) {
@@ -129,10 +129,12 @@ export const AuthProvider = ({ children }) => {
                 body: formData,
             });
 
+
+
             if (!res.ok) throw new Error("Profile update failed");
             const data = await res.json();
 
-            console.log("Profile updated", data);
+
             return data;
         } catch (error) {
             console.error(error);
@@ -183,7 +185,7 @@ export const AuthProvider = ({ children }) => {
                 headers: { "Authorization": `Bearer ${token}` },
                 body: formData,
             });
-            console.log(res);
+
 
             if (!res.ok) throw new Error("Send message failed");
 

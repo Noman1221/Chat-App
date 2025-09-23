@@ -16,22 +16,27 @@ function SideBar({ selectUser, setSelectUser }) {
         const getAllUser = async () => {
             try {
                 let data = await getUsersForSidebar();
-                if (data) setUsers(data);
+                if (data) {
+                    setUsers(data);
+                } else {
+                    setUsers([]);
+                }
             } catch (error) {
                 console.log(error);
+                setUsers([]);
             }
         };
         getAllUser();
     }, [getUsersForSidebar, user]);
 
     const handleLogout = () => {
-        logout(); // Call the logout function from context
-        // setShowMenu(false); // Close the dropdown menu
-        navigate('/register'); // Redirect to register page
+        logout();
+
+        navigate('/register');
     };
     // Filter users by search
-    const filteredUsers = users.filter(u =>
-        u.fullname.toLowerCase().includes(search.toLowerCase())
+    const filteredUsers = (users || []).filter(u =>
+        (u.fullname || "").toLowerCase().includes(search.toLowerCase())
     );
 
     return (

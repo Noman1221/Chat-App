@@ -10,8 +10,7 @@ import { ConnectToDb } from "./utils/db.js";
 dotenv.config();
 
 
-// await Message.deleteMany({});
-// console.log("all message deleted");
+
 
 
 const app = express();

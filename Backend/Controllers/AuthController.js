@@ -6,16 +6,16 @@ import User from "../Models/AuthModel.js";
 
 export const signup = async (req, res) => {
     try {
-        console.log(req.body);
+
 
         let { fullname, email, password } = req.body;
         if (!fullname || !email || !password) {
             return res.status(400).json({ message: "missing details" });
         };
-        console.log(fullname, email, password);
+
 
         const isUser = await User.findOne({ email });
-        console.log(isUser);
+
 
         if (isUser) {
             return res.status(400).json({ message: "user already exist" });
@@ -69,7 +69,7 @@ export const login = async (req, res) => {
             message: "user login successesfully"
         });
     } catch (error) {
-        console.error("Signup Error:", error);
+
         res.status(500).json({ message: error });
     }
 }
@@ -79,7 +79,7 @@ export const getCurrentUser = (req, res) => {
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized" });
     }
-    // console.log(req.user);
+
 
 
     res.json({ user: req.user });
@@ -89,11 +89,11 @@ export const getCurrentUser = (req, res) => {
 export const updateUserProfile = async (req, res) => {
     try {
         const { fullname, bio } = req.body;
-        const userId = req.user.userId;
+        const userId = req.user._id;
 
         let updatedFields = { fullname, bio };
 
-        // // multer + cloudinary already gives url in file.path
+
         if (req.file) {
             updatedFields.profilePicture = req.file.path;
         }
