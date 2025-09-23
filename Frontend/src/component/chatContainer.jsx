@@ -41,7 +41,7 @@ function ChatContainer({ selectUser, messages, setMessages }) {
         if (!user) return;
 
         if (!socketRef.current) {
-            socketRef.current = io(" https://chat-app-ypbg.onrender.com", {
+            socketRef.current = io("https://chat-app-ypbg.onrender.com", {
                 auth: { userId: user?._id },
             });
         }
