@@ -2,7 +2,7 @@
 import { createContext, useEffect, useState } from "react";
 
 export const authContext = createContext(null);
-const baseUrl = "http://localhost:5000";
+const baseUrl = "https://chat-app-ypbg.onrender.com";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
