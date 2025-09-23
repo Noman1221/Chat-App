@@ -16,11 +16,7 @@ dotenv.config();
 const app = express();
 const server = createServer(app);
 const corsOptions = {
-<<<<<<< HEAD
     origin: '*',
-=======
-    origin: 'https://chat-app-1-y8hy.onrender.com',
->>>>>>> f21a7a776f11fcc75087fce3263bd5b7294c1566
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
 };
 app.use(cors(corsOptions));
