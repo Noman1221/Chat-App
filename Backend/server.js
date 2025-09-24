@@ -15,10 +15,25 @@ dotenv.config();
 
 const app = express();
 const server = createServer(app);
+
+
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://chat-app-1-y8hy.onrender.com"
+];
+
 const corsOptions = {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true, // if using cookies or auth headers
+    methods: ["GET", "POST", "PUT", "DELETE"],
 };
+
 app.use(cors(corsOptions));
 
 
