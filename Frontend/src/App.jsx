@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { useContext } from "react";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 // Component names should be PascalCase
+import "react-loading-skeleton/dist/skeleton.css";
 import "./App.css";
 import { authContext } from "./context/authContext";
 import PrivateRoute from "./middleware/privateRoute";
@@ -10,13 +11,15 @@ import LoginPage from "./pages/loginPage";
 import ProfilePage from "./pages/profilePage";
 import UserProfile from "./pages/userProfile";
 function App() {
-  const auContext = useContext(authContext);
+
+  const { user } = useContext(authContext);
+  console.log(user, "hero");
 
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={user ? <HomePage /> : <Navigate to="/register" />} />
         <Route path="/register" element={<LoginPage />} />
         <Route path="/profile" element={
           <PrivateRoute>
