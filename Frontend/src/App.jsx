@@ -13,7 +13,6 @@ import UserProfile from "./pages/userProfile";
 function App() {
 
   const { user } = useContext(authContext);
-  console.log(user, "hero");
 
 
   return (
