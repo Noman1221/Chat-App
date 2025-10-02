@@ -1,32 +1,36 @@
 import { FaArrowLeft, FaTimes } from "react-icons/fa";
 import img1 from "../assets/img1.jpg";
 
-function RightSidebar({ selectUser, messages, onBack, showBackButton }) {
+function RightSidebar({ selectUser, messages, onClose, isMobile }) {
     return (
-        <div className="h-full bg-gray-50 border-l border-gray-200 flex flex-col">
-            {/* Header with back button for mobile */}
+        <div className={`h-full bg-gray-50 border-l border-gray-200 flex flex-col ${isMobile ? "w-full" : "w-full sm:w-96"
+            }`}>
+            {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
-                {showBackButton && (
+                {isMobile && (
                     <button
-                        onClick={onBack}
-                        className="md:hidden p-2 rounded-full hover:bg-gray-200"
+                        onClick={onClose}
+                        className="p-2 rounded-full hover:bg-gray-200 transition"
                     >
                         <FaArrowLeft size={18} />
                     </button>
                 )}
-                <h3 className="flex-1 text-center font-semibold text-gray-800">Profile</h3>
-                {showBackButton && (
+                <h2 className="text-lg font-semibold text-gray-800 flex-1 text-center">
+                    Profile
+                </h2>
+                {!isMobile && (
                     <button
-                        onClick={onBack}
-                        className="md:hidden p-2 rounded-full hover:bg-gray-200 opacity-0"
+                        onClick={onClose}
+                        className="p-2 rounded-full hover:bg-gray-200 transition"
                     >
                         <FaTimes size={18} />
                     </button>
                 )}
             </div>
 
-            {/* Profile Section */}
+            {/* Content */}
             <div className="flex-1 overflow-y-auto">
+                {/* Profile Section */}
                 <div className="flex flex-col items-center p-6 border-b border-gray-200">
                     <img
                         src={selectUser?.profilePicture || img1}

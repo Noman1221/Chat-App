@@ -90,7 +90,7 @@ function SideBar({ selectUser, setSelectUser }) {
                     </div>
                 )}
             </div>
-            <div className="fixed w-1/4 flex items-center justify-center top-[56px] z-10 bg-gray-100 px-4 py-2 ">
+            <div className="sticky top-14 z-20 bg-gray-100 px-4 py-2">
                 <input
                     type="text"
                     placeholder="Search user"
