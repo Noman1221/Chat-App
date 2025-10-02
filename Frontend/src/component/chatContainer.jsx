@@ -1,11 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { FaPaperclip, FaSmile } from "react-icons/fa";
+import { FaArrowLeft, FaPaperclip, FaSmile, FaUser } from "react-icons/fa";
 import { IoMdSend } from "react-icons/io";
 import { io } from "socket.io-client";
 import img1 from "../assets/img1.jpg";
 import { authContext } from "../context/authContext";
 
-function ChatContainer({ selectUser, messages, setMessages }) {
+function ChatContainer({ selectUser, messages, setMessages, onBack, onToggleProfile, showBackButton }) {
     const { user, getMessages, messageSend, markMessageAsSeen } = useContext(authContext);
 
     const [newMessages, setNewMessages] = useState("");
@@ -115,15 +115,33 @@ function ChatContainer({ selectUser, messages, setMessages }) {
             {/* Sticky Navbar */}
             {selectUser ? (
                 <div className="sticky top-0 z-10 bg-white shadow flex items-center gap-3 p-4">
+                    {/* Back Button - Show on mobile when in chat view */}
+                    {showBackButton && (
+                        <button
+                            onClick={onBack}
+                            className="md:hidden p-2 rounded-full hover:bg-gray-200 mr-2"
+                        >
+                            <FaArrowLeft size={18} />
+                        </button>
+                    )}
+
                     <img
                         src={selectUser?.profilePicture || img1}
                         alt="profile"
                         className="w-10 h-10 rounded-full object-cover"
                     />
-                    <div className="flex flex-col">
+                    <div className="flex-1 flex flex-col">
                         <h2 className="font-semibold text-gray-800">{selectUser?.fullname}</h2>
                         <span className="text-xs text-gray-500">Online</span>
                     </div>
+
+                    {/* Profile Toggle Button - Show on mobile */}
+                    <button
+                        onClick={onToggleProfile}
+                        className="md:hidden p-2 rounded-full hover:bg-gray-200"
+                    >
+                        <FaUser size={18} />
+                    </button>
                 </div>
             ) : (
                 <div className="flex-1 flex items-center justify-center">
