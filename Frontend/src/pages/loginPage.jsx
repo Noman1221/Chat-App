@@ -9,6 +9,8 @@ function LoginPage() {
     const [fullname, setFullname] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false); // ADD THIS
+    const [error, setError] = useState(""); // ADD THIS
     const { signup, login } = auththings;
 
     function toggleForm() {
@@ -17,27 +19,41 @@ function LoginPage() {
             setFullname("");
             setEmail("");
             setPassword("");
+            setError(""); // Clear error on toggle
         } catch (error) {
             console.log(error);
-
         }
     }
 
     async function handleForm(e) {
         e.preventDefault();
+        setError(""); // Clear previous errors
+        setLoading(true); // Start loading
+
         try {
             if (isSignLog === "Signup") {
-                await signup(fullname, email, password);
-                navigate("/profile");
+                const result = await signup(fullname, email, password);
+                if (result) {
+                    navigate("/profile"); // Go to profile setup
+                } else {
+                    setError("Signup failed. Please try again.");
+                }
             } else {
-                await login(email, password);
-                navigate("/");
+                const result = await login(email, password);
+                if (result) {
+                    navigate("/"); // Go to home page
+                } else {
+                    setError("Login failed. Please check your credentials.");
+                }
             }
             setFullname("");
             setEmail("");
             setPassword("");
         } catch (error) {
             console.log(error);
+            setError(error.message || "Something went wrong. Please try again.");
+        } finally {
+            setLoading(false); // Stop loading
         }
     }
 
@@ -47,6 +63,14 @@ function LoginPage() {
                 <h3 className="text-2xl font-bold text-center text-gray-800 mb-6">
                     {isSignLog}
                 </h3>
+
+                {/* Error message */}
+                {error && (
+                    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+                        {error}
+                    </div>
+                )}
+
                 <form onSubmit={handleForm} className="space-y-4">
                     {/* Full Name (only for signup) */}
                     {isSignLog === "Signup" && (
@@ -55,7 +79,9 @@ function LoginPage() {
                             value={fullname}
                             onChange={(e) => setFullname(e.target.value)}
                             placeholder="Full Name"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            required
+                            disabled={loading}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
                         />
                     )}
 
@@ -65,7 +91,9 @@ function LoginPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Email"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        required
+                        disabled={loading}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     />
 
                     {/* Password */}
@@ -74,15 +102,25 @@ function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Password"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        required
+                        disabled={loading}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     />
 
                     {/* Submit button */}
                     <button
                         type="submit"
-                        className="w-full bg-blue-500 text-white py-2 rounded-lg font-medium hover:bg-blue-600 transition"
+                        disabled={loading}
+                        className="w-full bg-green-500 text-white py-2 rounded-lg font-medium hover:bg-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                        {isSignLog}
+                        {loading ? (
+                            <>
+                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                <span>{isSignLog === "Signup" ? "Signing up..." : "Logging in..."}</span>
+                            </>
+                        ) : (
+                            isSignLog
+                        )}
                     </button>
                 </form>
 
@@ -92,7 +130,7 @@ function LoginPage() {
                         <>
                             Already have an account?{" "}
                             <span
-                                className="text-blue-500 cursor-pointer hover:underline"
+                                className="text-green-500 cursor-pointer hover:underline font-medium"
                                 onClick={toggleForm}
                             >
                                 Login
@@ -102,7 +140,7 @@ function LoginPage() {
                         <>
                             Create an account?{" "}
                             <span
-                                className="text-blue-500 cursor-pointer hover:underline"
+                                className="text-green-500 cursor-pointer hover:underline font-medium"
                                 onClick={toggleForm}
                             >
                                 Signup

@@ -6,13 +6,16 @@ const baseUrl = "https://chat-app-ypbg.onrender.com";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-
-
+    const [loading, setLoading] = useState(true); // ADD THIS
 
     // Load user from token on app load
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (!token) return;
+
+        if (!token) {
+            setLoading(false); // No token, done loading
+            return;
+        }
 
         (async () => {
             try {
@@ -22,16 +25,14 @@ export const AuthProvider = ({ children }) => {
                 if (!res.ok) throw new Error("Not authenticated");
                 const data = await res.json();
                 setUser(data.user);
-
             } catch {
                 setUser(null);
                 localStorage.removeItem("token");
-
+            } finally {
+                setLoading(false); // Done loading
             }
         })();
     }, []);
-
-
 
     const signup = async (fullname, email, password) => {
         try {
@@ -41,12 +42,10 @@ export const AuthProvider = ({ children }) => {
                 body: JSON.stringify({ fullname, email, password }),
             });
 
-
             if (!res.ok) throw new Error("Signup failed");
 
             const data = await res.json();
             localStorage.setItem('token', data.token);
-
 
             if (data.userData) setUser(data.userData);
             else {
@@ -60,7 +59,6 @@ export const AuthProvider = ({ children }) => {
     };
 
     const login = async (email, password) => {
-
         try {
             const res = await fetch(`${baseUrl}/users/api/login`, {
                 method: "POST",
@@ -73,11 +71,10 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem("token", data.token);
 
             if (data.isUser) {
-                setUser(data.isUser)
+                setUser(data.isUser);
+            }
 
-            };
-
-            return data.isUser
+            return data.isUser;
         } catch (error) {
             console.error("Login Error:", error);
         }
@@ -85,7 +82,6 @@ export const AuthProvider = ({ children }) => {
 
     const fetchCurrentUser = async () => {
         const token = localStorage.getItem("token");
-
 
         if (!token) return null;
 
@@ -96,11 +92,9 @@ export const AuthProvider = ({ children }) => {
             if (!res.ok) return null;
             const data = await res.json();
 
-
             return data.user;
         } catch (error) {
             console.log(error);
-
         }
     };
 
@@ -117,30 +111,31 @@ export const AuthProvider = ({ children }) => {
             formData.append("fullname", name);
             formData.append("bio", bio);
             if (file) {
-                formData.append("profilePicture", file); // must match multer field name
+                formData.append("profilePicture", file);
             }
 
             const res = await fetch(`${baseUrl}/users/api/updateProfile`, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    // ❌ DO NOT set Content-Type manually (browser sets multipart/form-data)
                 },
                 body: formData,
             });
 
-
-
             if (!res.ok) throw new Error("Profile update failed");
             const data = await res.json();
 
+            // Update user state immediately
+            if (data.user) {
+                setUser(data.user);
+            }
 
             return data;
         } catch (error) {
             console.error(error);
+            throw error;
         }
     };
-
 
     const getUsersForSidebar = async () => {
         const token = localStorage.getItem('token');
@@ -153,11 +148,9 @@ export const AuthProvider = ({ children }) => {
             if (!res.ok) throw new Error("Get users failed");
             const data = await res.json();
 
-
             return data.users;
         } catch (error) {
             console.log(error);
-
         }
     };
 
@@ -170,10 +163,9 @@ export const AuthProvider = ({ children }) => {
             });
             if (!res.ok) throw new Error("Get messages failed");
             let data = await res.json();
-            return data
+            return data;
         } catch (error) {
             console.log(error);
-
         }
     };
 
@@ -186,16 +178,13 @@ export const AuthProvider = ({ children }) => {
                 body: formData,
             });
 
-
             if (!res.ok) throw new Error("Send message failed");
 
             return await res.json();
         } catch (error) {
             console.log(error);
-
         }
     };
-
 
     const markMessageAsSeen = async (id) => {
         const token = localStorage.getItem("token");
@@ -208,13 +197,13 @@ export const AuthProvider = ({ children }) => {
             return await res.json();
         } catch (error) {
             console.log(error);
-
         }
     };
 
     return (
         <authContext.Provider value={{
             user,
+            loading, // ADD THIS
             signup,
             login,
             logout,
@@ -224,7 +213,6 @@ export const AuthProvider = ({ children }) => {
             messageSend,
             markMessageAsSeen,
             fetchCurrentUser,
-
         }}>
             {children}
         </authContext.Provider>

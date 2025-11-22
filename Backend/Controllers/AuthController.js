@@ -34,7 +34,7 @@ export const signup = async (req, res) => {
         if (!token) {
             return res.status(404).json({ message: "Token not created" });
         };
-        res.status(200).json({ userData: newUser, token, message: "user created successfully" })
+        res.status(201).json({ userData: newUser, token, message: "user created successfully" })
     } catch (error) {
         console.error("Signup Error:", error);
         res.status(500).json({ message: error });

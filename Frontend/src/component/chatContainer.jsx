@@ -18,6 +18,7 @@ function ChatContainer({
 
     const [newMessages, setNewMessages] = useState("");
     const [file, setFile] = useState(null);
+    const [loading, setLoading] = useState(false); // ADD THIS
     const socketRef = useRef(null);
     const chatEndRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -100,12 +101,21 @@ function ChatContainer({
         }
     };
 
-    // Load messages
+    // Load messages with loading state
     useEffect(() => {
         const getAllMsg = async () => {
             if (!id) return;
-            const res = await getMessages(id);
-            setMessages(res.messages || []);
+
+            setLoading(true); // Start loading
+            try {
+                const res = await getMessages(id);
+                setMessages(res.messages || []);
+            } catch (error) {
+                console.error("Failed to load messages:", error);
+                setMessages([]);
+            } finally {
+                setLoading(false); // Stop loading
+            }
         };
         getAllMsg();
     }, [getMessages, id, selectUser, setMessages]);
@@ -165,10 +175,23 @@ function ChatContainer({
 
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto px-4 py-3">
-                {selectUser && messages.length > 0 ? (
+                {loading ? (
+                    // Loading spinner
+                    <div className="flex items-center justify-center h-full">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-3"></div>
+                            <p className="text-gray-500 text-sm">Loading messages...</p>
+                        </div>
+                    </div>
+                ) : selectUser && messages.length > 0 ? (
                     <div className="space-y-4">
                         {messages.map((msg) => {
-                            const isSender = msg.senderId === user?._id;
+                            // FIX: Handle both string IDs and populated objects
+                            const messageSenderId = typeof msg.senderId === 'object'
+                                ? msg.senderId?._id
+                                : msg.senderId;
+                            const isSender = messageSenderId === user?._id;
+
                             return (
                                 <div
                                     key={msg._id}

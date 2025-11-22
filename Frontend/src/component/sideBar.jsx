@@ -11,9 +11,11 @@ function SideBar({ selectUser, setSelectUser }) {
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [showMenu, setShowMenu] = useState(false);
+    const [loading, setLoading] = useState(false); // ADD THIS
 
     useEffect(() => {
         const getAllUser = async () => {
+            setLoading(true); // Start loading
             try {
                 let data = await getUsersForSidebar();
                 if (data) {
@@ -24,6 +26,8 @@ function SideBar({ selectUser, setSelectUser }) {
             } catch (error) {
                 console.log(error);
                 setUsers([]);
+            } finally {
+                setLoading(false); // Stop loading
             }
         };
         getAllUser();
@@ -31,9 +35,9 @@ function SideBar({ selectUser, setSelectUser }) {
 
     const handleLogout = () => {
         logout();
-
         navigate('/register');
     };
+
     // Filter users by search
     const filteredUsers = (users || []).filter(u =>
         (u.fullname || "").toLowerCase().includes(search.toLowerCase())
@@ -81,7 +85,6 @@ function SideBar({ selectUser, setSelectUser }) {
                                 <Link
                                     onClick={handleLogout}
                                     className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
-
                                 >
                                     Logout
                                 </Link>
@@ -99,31 +102,50 @@ function SideBar({ selectUser, setSelectUser }) {
                     className="w-full px-3 py-2 rounded-full border focus:outline-none focus:ring"
                 />
             </div>
+
             {/* User list */}
-            <div className="flex-1 overflow-y-auto px-2 mt-14">
-                <ul>
-                    {filteredUsers.map((u) => (
-                        <li
-                            key={u._id}
-                            onClick={() => setSelectUser(u)}
-                            className={`flex items-center gap-3 p-3 cursor-pointer rounded-xl transition
-                                ${selectUser?._id === u._id
-                                    ? "bg-green-500 text-white"
-                                    : "text-gray-800 hover:bg-green-100"
-                                }`}
-                        >
-                            <img
-                                src={u.profilePicture || img1}
-                                alt="avatar"
-                                className="w-10 h-10 rounded-full object-cover"
-                            />
-                            <div className="flex-1">
-                                <div className="font-semibold">{u.fullname}</div>
-                                {/* Optionally show last message/time here */}
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+            <div className="flex-1 overflow-y-auto px-2 mt-2">
+                {loading ? (
+                    // Loading spinner
+                    <div className="flex items-center justify-center h-full">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-3"></div>
+                            <p className="text-gray-500 text-sm">Loading users...</p>
+                        </div>
+                    </div>
+                ) : filteredUsers.length > 0 ? (
+                    <ul>
+                        {filteredUsers.map((u) => (
+                            <li
+                                key={u._id}
+                                onClick={() => setSelectUser(u)}
+                                className={`flex items-center gap-3 p-3 cursor-pointer rounded-xl transition
+                                    ${selectUser?._id === u._id
+                                        ? "bg-green-500 text-white"
+                                        : "text-gray-800 hover:bg-green-100"
+                                    }`}
+                            >
+                                <img
+                                    src={u.profilePicture || img1}
+                                    alt="avatar"
+                                    className="w-10 h-10 rounded-full object-cover"
+                                />
+                                <div className="flex-1">
+                                    <div className="font-semibold">{u.fullname}</div>
+                                    {/* Optionally show last message/time here */}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <div className="flex items-center justify-center h-full">
+                        <div className="text-center text-gray-500">
+                            <p className="text-sm">
+                                {search ? "No users found" : "No users available"}
+                            </p>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
