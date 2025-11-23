@@ -120,7 +120,7 @@ function ChatContainer({
         getAllMsg();
     }, [getMessages, id, selectUser, setMessages]);
 
-    // Format time
+    // Format time when message update update
     const formatTime = (dateString) => {
         return new Date(dateString).toLocaleTimeString([], {
             hour: '2-digit',
@@ -186,7 +186,7 @@ function ChatContainer({
                 ) : selectUser && messages.length > 0 ? (
                     <div className="space-y-4">
                         {messages.map((msg) => {
-                            // FIX: Handle both string IDs and populated objects
+                            // Handle both string IDs and populated objects
                             const messageSenderId = typeof msg.senderId === 'object'
                                 ? msg.senderId?._id
                                 : msg.senderId;
@@ -205,7 +205,7 @@ function ChatContainer({
                                             className="w-8 h-8 rounded-full object-cover mx-2 self-end"
                                         />
 
-                                        {/* Message Bubble */}
+
                                         <div
                                             className={`relative p-3 rounded-2xl shadow-sm ${isSender
                                                 ? 'bg-green-100 rounded-br-none'

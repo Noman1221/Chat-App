@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 
 function UpdateData() {
     const location = useLocation();
-    const { message, user } = location.state || {}; // ✅ get data
+    const { message, user } = location.state || {}; //  get data
 
     if (!user) return <p>No profile data available</p>;
 
