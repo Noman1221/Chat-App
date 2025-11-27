@@ -13,23 +13,15 @@ dotenv.config();
 
 
 
-// // Create an Express app and attach it to an HTTP server. 
 const app = express();
 const server = createServer(app);
 
-// List of frontend URLs allowed to access this backend
 const allowedOrigins = [
     "http://localhost:5173",
     "https://chat-app-1-y8hy.onrender.com"
 ];
 
-// Defines CORS rules:
 
-// Allows only trusted origins
-
-// Supports credentials (like cookies or tokens)
-
-// Specifies allowed HTTP methods
 const corsOptions = {
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
@@ -51,39 +43,32 @@ export const io = new Server(server, {
     cors: { origin: "*" },
 })
 
-// store online users 
+
 // An object to store which user is connected to which socket.
 export const userSocketMap = {};
 
 io.on("connection", (socket) => {
-    // Reads the userId sent by the client during connection.
+
     const userId = socket.handshake.auth?.userId;
 
 
-    //     If a userId is provided:
 
-    // Add that socket.id to the user’s set(to support multiple devices).
-
-    // Log connected users.
 
     if (userId) {
         if (!userSocketMap[userId]) {
             userSocketMap[userId] = new Set();
         }
         userSocketMap[userId].add(socket.id);
-        // Store userId on the socket for later use
         console.log("socket connected User:", userSocketMap);
         socket.userId = userId;
     }
 
-    // Send online users
+
     // Sends the list of online users to all connected clients.
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     // Runs when a user disconnects. 
-    //     Removes the user’s socket when disconnected.
-    // ➡ If no sockets left, remove user completely from online list.
-    // ➡ Update all clients with new online users.
+
     socket.on("disconnect", () => {
         const uid = socket.userId;
         if (uid && userSocketMap[uid]) {
@@ -92,15 +77,16 @@ io.on("connection", (socket) => {
                 delete userSocketMap[uid];
             }
         }
+        // Update all clients with new online users.
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });
 });
 
 
-app.use(express.json({ limit: "10mb" })); // Increase from 4mb to 10mb
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-// Mount your routes
+
 // Add API routes for authentication and messaging
 app.use("/users/api", authRoutes);
 app.use("/api/messages", messageRoute)
@@ -108,7 +94,6 @@ app.use("/api/messages", messageRoute)
 
 ConnectToDb();
 
-// Start the server on the given port and log it.
 const port = process.env.PORT || 5000;
 server.listen(port, () => {
     console.log("server listen on port", port);

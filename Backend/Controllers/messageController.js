@@ -1,13 +1,11 @@
 
-// Importing the user model and message model to interact with MongoDB.
 
 import user from "../Models/AuthModel.js";
 import Message from "../Models/message.js";
-// Importing io and userSocketMap from the server to handle real - time messages with Socket.IO.
+
 import { io, userSocketMap } from "../server.js";
 
 // get all users except the logged in user
-// “This function fetches all users except the logged -in one and also shows which users have sent unseen messages.”
 export const getUsersForSidebar = async (req, res) => {
     try {
         let userId = req.user._id;
@@ -30,15 +28,14 @@ export const getUsersForSidebar = async (req, res) => {
     }
 }
 
-// get all the messages
+
 // This function fetches all messages between the logged -in user and the selected contact
-// This API fetches all chat history between two users and automatically marks any unseen messages as seen
 export const getMessages = async (req, res) => {
     try {
         let { id } = req.params;
         let userId = req.user._id;
 
-        console.log("Fetching messages for user:", userId, "with contact:", id);
+        // console.log("Fetching messages for user:", userId, "with contact:", id);
         // After fetching, it marks unseen messages as seen.
         let messages = await Message.find({
             $or: [
@@ -50,12 +47,11 @@ export const getMessages = async (req, res) => {
             .populate("senderId", "fullname profilePicture")
             .populate("recieverId", "fullname profilePicture");
 
-        // Mark messages as seen - use string IDs consistently
         await Message.updateMany(
             {
                 senderId: id,
                 recieverId: userId,
-                seen: false // Only mark unseen messages as seen
+                seen: false
             },
             {
                 seen: true,
@@ -76,8 +72,8 @@ export const getMessages = async (req, res) => {
 // This marks all messages from a specific sender as seen and stores the time when they were read.
 export const markMessageAsSeen = async (req, res) => {
     try {
-        const receiverId = req.user._id; // logged-in user from isAuthenticate
-        const senderId = req.params.id;  // selected user id from URL
+        const receiverId = req.user._id;
+        const senderId = req.params.id;
 
         let seenMessage = await Message.updateMany(
             { senderId, receiverId, seen: false },
@@ -94,8 +90,6 @@ export const markMessageAsSeen = async (req, res) => {
 
 
 // This function sends a new message from one user to another
-// and also delivers it in real - time using Socket.IO
-// This function saves the message in MongoDB and instantly emits it to both users through Socket.IO for real - time chat updates
 export const messageSend = async (req, res) => {
     try {
         const { id } = req.params; // receiver id
