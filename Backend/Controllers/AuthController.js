@@ -1,13 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../Models/AuthModel.js";
-
 // sign Up for new User 
 
 export const signup = async (req, res) => {
     try {
-
-
         let { fullname, email, password } = req.body;
         if (!fullname || !email || !password) {
             return res.status(400).json({ message: "missing details" });

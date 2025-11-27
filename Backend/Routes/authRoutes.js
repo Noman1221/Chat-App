@@ -7,13 +7,14 @@ import {
     signup,
     updateUserProfile
 } from "../Controllers/AuthController.js";
-import { isAuthenticate } from "../middleware/isAuthenticate.js";
+import { isAuthenticate, } from "../middleware/isAuthenticate.js";
+import { ValidateSignUp, validate } from "../middleware/validators.js";
 const upload = multer({ storage });
 // import upload from "../middleware/multer.js";
 
 const router = express.Router();
 
-router.post("/signup", signup);
+router.post("/signup", ValidateSignUp, validate, signup);
 router.post("/login", login);
 router.get("/me", isAuthenticate, getCurrentUser);
 
