@@ -11,5 +11,5 @@ export const validate = (req, res, next) => {
 export const ValidateSignUp = [
     body("fullname").trim().notEmpty().withMessage("name is required"),
     body("email").trim().isEmail().withMessage("email is not valid"),
-    body("password").notEmpty().isLength({ min: 4 }).withMessage("Password is required"),
+    body("password").notEmpty().isLength({ min: 6 }).withMessage("Password is required"),
 ]
