@@ -47,19 +47,21 @@ export const io = new Server(server, {
 // An object to store which user is connected to which socket.
 export const userSocketMap = {};
 
+
 io.on("connection", (socket) => {
 
     const userId = socket.handshake.auth?.userId;
 
-
+    console.log("here is", userId);
 
 
     if (userId) {
         if (!userSocketMap[userId]) {
             userSocketMap[userId] = new Set();
+            console.log('what', userSocketMap);
         }
         userSocketMap[userId].add(socket.id);
-        console.log("socket connected User:", userSocketMap);
+        // console.log("socket connected User:", userSocketMap);
         socket.userId = userId;
     }
 

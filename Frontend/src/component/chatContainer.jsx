@@ -48,9 +48,10 @@ function ChatContainer({
     // Connect to socket.io
     useEffect(() => {
         if (!user) return;
+        console.log(user);
 
         if (!socketRef.current) {
-            socketRef.current = io("https://chat-app-ypbg.onrender.com", {
+            socketRef.current = io( /*"https://chat-app-ypbg.onrender.com",*/ "http://localhost:5000", {
                 auth: { userId: user?._id },
             });
         }
