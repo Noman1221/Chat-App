@@ -18,7 +18,9 @@ function ChatContainer({
 
     const [newMessages, setNewMessages] = useState("");
     const [file, setFile] = useState(null);
-    const [loading, setLoading] = useState(false); // ADD THIS
+    const [loading, setLoading] = useState(false);
+    const [onlineUsers, setOnlineUsers] = useState([]);
+
     const socketRef = useRef(null);
     const chatEndRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -28,6 +30,7 @@ function ChatContainer({
     // Mark as seen
     useEffect(() => {
         if (!id) return;
+
         const markSeen = async () => {
             try {
                 await markMessageAsSeen(id);
@@ -48,7 +51,6 @@ function ChatContainer({
     // Connect to socket.io
     useEffect(() => {
         if (!user) return;
-        console.log(user);
 
         if (!socketRef.current) {
             socketRef.current = io( /*"https://chat-app-ypbg.onrender.com",*/ "http://localhost:5000", {
@@ -58,6 +60,11 @@ function ChatContainer({
 
         const socket = socketRef.current;
 
+
+        const handleOnlineUsers = (users) => {
+            setOnlineUsers(users);
+        };
+        socket.on("getOnlineUsers", handleOnlineUsers);
         const handleNewMessage = (msg) => {
             if (
                 (msg.senderId === user?._id && msg.recieverId === id) ||
@@ -70,7 +77,9 @@ function ChatContainer({
         socket.on("newMessage", handleNewMessage);
 
         return () => {
+            socket.off("getOnlineUsers", handleOnlineUsers);
             socket.off("newMessage", handleNewMessage);
+
         };
     }, [user, id, setMessages]);
 
@@ -129,6 +138,8 @@ function ChatContainer({
         });
     };
 
+    const isUserOnline = onlineUsers.includes(selectUser?._id);
+
     return (
         <div className="flex flex-col h-screen bg-gray-100">
             {/* Sticky Navbar */}
@@ -151,7 +162,8 @@ function ChatContainer({
                     />
                     <div className="flex flex-col flex-1">
                         <h2 className="font-semibold text-gray-800">{selectUser?.fullname}</h2>
-                        <span className="text-xs text-gray-500">Online</span>
+                        <span className={`text-xs ${isUserOnline ? "text-green-500" : "text-gray-500"
+                            }`}> {isUserOnline ? "Online" : "Offline"}</span>
                     </div>
 
                     {/* Profile button */}
