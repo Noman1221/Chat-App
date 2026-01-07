@@ -123,7 +123,7 @@ export const messageSend = async (req, res) => {
         // Find all socket IDs of the receiver:
         const recieverSocketIds = userSocketMap[id];
         if (recieverSocketIds) {
-            [...recieverSocketIds].forEach((sockId) => {   // Convert Set → Array
+            [...recieverSocketIds].forEach((sockId) => {   
                 // Send real-time message event:
                 io.to(sockId).emit("newMessage", payload);
             });
