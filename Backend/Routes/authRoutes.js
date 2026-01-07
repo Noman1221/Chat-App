@@ -18,7 +18,7 @@ router.post("/signup", ValidateSignUp, validate, signup);
 router.post("/login", login);
 router.get("/me", isAuthenticate, getCurrentUser);
 
-// ✅ Profile update with image
+
 router.put("/updateProfile", isAuthenticate, upload.single("profilePicture"), updateUserProfile);
 
 export default router;
