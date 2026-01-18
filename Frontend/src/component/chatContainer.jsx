@@ -53,7 +53,7 @@ function ChatContainer({
         if (!user) return;
 
         if (!socketRef.current) {
-            socketRef.current = io( /*"https://chat-app-ypbg.onrender.com",*/ "http://localhost:5000", {
+            socketRef.current = io( "https://chat-app-ypbg.onrender.com",{
                 auth: { userId: user?._id },
             });
         }
