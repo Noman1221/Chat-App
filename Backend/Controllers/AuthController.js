@@ -45,18 +45,21 @@ export const login = async (req, res) => {
 
     try {
         let { email, password } = req.body;
+       
+        
         if (!email || !password) {
             return res.status(400).json({ message: "missing details" });
         };
 
         const isUser = await User.findOne({ email });
-
+        
 
         if (!isUser) {
             return res.status(400).json({ message: "user not found" });
         }
 
         const isCompare = await bcrypt.compare(password, isUser.password);
+        
         if (!isCompare) {
             return res.status(400).json({ message: "invalid credentials" });
         }

@@ -17,7 +17,7 @@ const app = express();
 const server = createServer(app);
 
 const allowedOrigins = [
-    // "http://localhost:5173",
+    "http://localhost:5173",
     "https://chat-app-1-y8hy.onrender.com"
 ];
 
